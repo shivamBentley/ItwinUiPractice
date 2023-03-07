@@ -1,5 +1,9 @@
 import { Button } from '@itwin/itwinui-react'
 import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { bindActionCreators } from 'redux'
+import { actionCreators } from "../state"
+
 import Input from './Input'
 import "./styles/DataInput.scss"
 interface itemType {
@@ -20,6 +24,15 @@ export default function DataInput({ addItem }: any) {
         subtotal: 0,
         time: 0
     }
+    const state = useSelector((state: any) => state.ItemList)
+    console.log(state)
+    const dispatch = useDispatch()
+
+    //contain all action creator function ..
+    const { removeItem} = bindActionCreators(actionCreators, dispatch)
+    console.log()
+
+
     const [focus, setFocus] = useState<boolean>(true)
     const [item, setItem] = useState<itemType>(initialInput);
 
@@ -57,7 +70,7 @@ export default function DataInput({ addItem }: any) {
 
     useEffect(() => {
         setFocus(true);
-    }, [focus ,addItem])
+    }, [focus, addItem])
 
     return (
         <div className='data-Input' >
