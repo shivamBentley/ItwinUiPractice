@@ -1,4 +1,11 @@
-.list-table{
+.list-table {
     width: 80%;
     margin-left: 10%;
+
+    span:hover {
+        background-color: lightgray;
+        border-radius: 1rem;
+        width: 2rem;
+        height: 1.5rem;
+    }
 }

@@ -1,22 +1,15 @@
 import { Button } from '@itwin/itwinui-react'
 import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { useDispatch } from 'react-redux/es/exports'
 import { bindActionCreators } from 'redux'
 import { actionCreators } from "../state"
 
 import Input from './Input'
 import "./styles/DataInput.scss"
-interface itemType {
-    time: Number,
-    itemName: String,
-    description: String,
-    quantity: Number,
-    price: Number,
-    subtotal: Number,
-}
 
-export default function DataInput({ addItem }: any) {
+export default function DataInput() {
     const initialInput = {
+        index: 0,
         itemName: '',
         description: '',
         quantity: 0,
@@ -24,13 +17,9 @@ export default function DataInput({ addItem }: any) {
         subtotal: 0,
         time: 0
     }
-    const state = useSelector((state: any) => state.ItemList)
-    console.log(state)
-    const dispatch = useDispatch()
 
     //contain all action creator function ..
-    const { removeItem} = bindActionCreators(actionCreators, dispatch)
-    console.log()
+    const { addItem } = bindActionCreators(actionCreators, useDispatch());
 
 
     const [focus, setFocus] = useState<boolean>(true)
@@ -49,12 +38,10 @@ export default function DataInput({ addItem }: any) {
         setFocus(false);
     }
 
-
     useEffect(() => {
         const element: any = document;
-
         const handleClick = async (e: any) => {
-            if (e.key == 'Enter') {
+            if (e.key === 'Enter') {
                 element.getElementById('addItem-button').click();
             }
         };
@@ -66,11 +53,11 @@ export default function DataInput({ addItem }: any) {
                 element.removeEventListener('keydown', handleClick);
             }
         };
-    }, [addItem, focus]);
+    }, [focus]);
 
     useEffect(() => {
         setFocus(true);
-    }, [focus, addItem])
+    }, [focus])
 
     return (
         <div className='data-Input' >
@@ -123,7 +110,6 @@ export default function DataInput({ addItem }: any) {
                 >
                     Add Item
                 </Button></div>
-
         </div>
     )
 }

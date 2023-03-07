@@ -1,25 +1,29 @@
 
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { bindActionCreators } from 'redux'
+import { actionCreators } from "../state"
+import store from '../state/store'
+import { RiDeleteBin6Line, RiEditBoxLine } from 'react-icons/ri'
+
 import './styles/List.scss'
 
 import {
     Table,
     tableFilters,
 } from '@itwin/itwinui-react';
+import type {
+    CellProps,
+} from 'react-table';
 
-interface propsType {
-    data: {
-        index: Number
-        time: Number,
-        itemName: String,
-        description: String,
-        quantity: Number,
-        price: Number,
-        subtotal: Number
-    }[]
-}
+function List() {
+    const listItem: itemType[] = useSelector((state: any) => {
+        const store: Invoice = state.store;
+        return store.itemList
+    })
+    const [itemList, setItemList] = useState<any>(listItem);
+    const { removeItem, editItem } = bindActionCreators(actionCreators, useDispatch());
 
-function List({ data }: propsType) {
     const translatedLabels = useMemo(
         () => ({
             filter: 'Filter',
@@ -30,13 +34,6 @@ function List({ data }: propsType) {
         [],
     );;
 
-    const onFilter = () => {
-
-    }
-
-    const sort = () => {
-
-    }
 
     const columns = useMemo(
         () => [
@@ -53,7 +50,7 @@ function List({ data }: propsType) {
                     {
                         id: 'itemName',
                         Header: 'Item Name',
-                        accessor: 'itemName',
+                        accessor: 'time',
                         Filter: tableFilters.NumberRangeFilter(translatedLabels),
                         maxWidth: 200,
                     },
@@ -82,27 +79,48 @@ function List({ data }: propsType) {
                         Header: 'Subtotal',
                         accessor: 'subtotal',
                         Filter: tableFilters.NumberRangeFilter(translatedLabels),
-                    },
 
+                    },
+                    {
+                        id: 'edit-me',
+                        Header: '',
+                        width: 50,
+                        Cell: (props: CellProps<any>) => {
+                            return <span id="delete-button" style={{ color: 'green' }} onClick={() => editItem(props.row.original.index)}><RiEditBoxLine /></span>;
+                        },
+                    },
+                    {
+                        id: 'click-me',
+                        Header: '',
+                        width: 50,
+                        Cell: (props: CellProps<any>) => {
+                            return <span id="edit-button" style={{ color: 'red' }} onClick={() => removeItem(props.row.original.index)}><RiDeleteBin6Line /></span>;
+                        },
+                    }
                 ],
             },
         ],
-        [],
+        [editItem, removeItem, translatedLabels],
     );
 
-    data.sort((item1, item2) => item2.time.valueOf() - item1.time.valueOf());
+    useEffect(() => {
+        const unsubscribe = store.subscribe(() => {
+            // update component state or do something else
+            const updateList: itemType[] = store.getState().store.itemList.slice()
+            setItemList(updateList)
+        });
+        return () => unsubscribe();
+    }, [itemList]);
+
     return (
         <div className='list-table'>
             <Table
                 columns={columns}
-                data={data}
+                data={itemList}
                 emptyTableContent='No data.'
                 isSelectable={true}
                 selectionMode='multi'
                 isSortable
-                isResizable
-                onSort={sort}
-                onFilter={onFilter}
             />
         </div>
     )
