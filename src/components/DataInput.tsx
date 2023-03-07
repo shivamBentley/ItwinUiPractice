@@ -1,5 +1,5 @@
 import { Button } from '@itwin/itwinui-react'
-import  { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Input from './Input'
 import "./styles/DataInput.scss"
 interface itemType {
@@ -36,9 +36,28 @@ export default function DataInput({ addItem }: any) {
         setFocus(false);
     }
 
+
+    useEffect(() => {
+        const element: any = document;
+
+        const handleClick = async (e: any) => {
+            if (e.key == 'Enter') {
+                element.getElementById('addItem-button').click();
+            }
+        };
+        if (element !== null) {
+            element.addEventListener('keydown', handleClick);
+        }
+        return () => {
+            if (element !== null) {
+                element.removeEventListener('keydown', handleClick);
+            }
+        };
+    }, [addItem, focus]);
+
     useEffect(() => {
         setFocus(true);
-    }, [focus])
+    }, [focus ,addItem])
 
     return (
         <div className='data-Input' >
@@ -87,6 +106,7 @@ export default function DataInput({ addItem }: any) {
             <div className='inline-input add-button'>
                 <Button onClick={() => { addItems(item) }}
                     styleType='high-visibility'
+                    id="addItem-button"
                 >
                     Add Item
                 </Button></div>
