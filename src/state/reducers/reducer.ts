@@ -30,6 +30,16 @@ const removeItem = (state: any, action: any) => {
             state.totalAmount -= item.subtotal;
         }
     });
+
+    //change serial index of all rowData 
+    const updatedIndexList: any = [];
+    newList.sort((a: any, b: any) => a - b)
+    newList.forEach((row: any, index: any) => {
+        console.log({ ...row })
+        updatedIndexList.push({ ...row, ['index']: newList.length - index })
+    })
+    newList = updatedIndexList;
+
     state.itemList = newList;
     return state;
 }
