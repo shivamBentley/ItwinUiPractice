@@ -16,7 +16,7 @@ const addItem = (state: any, action: any) => {
     action.payload.index = index;
     state.itemList.push(action.payload)
     state.totalAmount += action.payload.subtotal;
-    state.totalPiece += action.payload.quantity;
+    state.totalPiece += parseInt(action.payload.quantity);
     state.date = new Date();
     state.itemList.sort((a: any, b: any) => b.index - a.index)
     return state;
@@ -55,17 +55,23 @@ const editItem = (state: any, action: any) => {
             const updatedItem = { ...item, [columnId]: value }
             if (columnId === "price" || columnId === "quantity") {
                 state.totalAmount -= item.subtotal;
-                state.totalPiece -= item.quantity;
+                state.totalPiece -= parseInt(item.quantity);
                 const updatedSubTotalAmount = updatedItem.quantity * updatedItem.price;
                 updatedItem.subtotal = updatedSubTotalAmount;
                 state.totalAmount += updatedItem.subtotal;
-                state.totalPiece += updatedItem.quantity;
+                state.totalPiece += parseInt(updatedItem.quantity);
             }
             newList.push(updatedItem);
         }
         else newList.push(item)
     });
     state.itemList = newList;
+    return state;
+}
+
+const updateCutomer = (state: any, action: any) => {
+    const customer = action.payload;
+    state.customerDetails = customer;
     return state;
 }
 
@@ -79,6 +85,8 @@ const reducer = (state: any = initialState, action: any) => {
             return removeItem(state, action);
         case "editItem":
             return editItem(state, action);
+        case "updateCustomer":
+            return updateCutomer(state, action);
         default:
             return state;
     }

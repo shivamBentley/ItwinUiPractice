@@ -1,6 +1,6 @@
 
 import { useMemo, useEffect, useState, useCallback } from 'react'
-import { useSelector, useDispatch } from 'react-redux/es/exports'
+import { useSelector, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actionCreators } from "../state"
 import store from '../state/store'
@@ -12,7 +12,8 @@ import {
     EditableCell,
     DefaultCell,
     Table,
-    tableFilters,
+    TablePaginator,
+    TablePaginatorRendererProps,
 
 } from '@itwin/itwinui-react';
 import type {
@@ -45,7 +46,7 @@ function List() {
                 Header: 'Table',
                 columns: [
                     {
-                        id: 'index',
+                        id: '',
                         Header: 'SL',
                         accessor: 'index',
                         maxWidth: 80,
@@ -56,7 +57,6 @@ function List() {
                         Header: 'Item Name',
                         accessor: 'itemName',
                         // Filter: tableFilters.NumberRangeFilter(translatedLabels),
-                        maxWidth: 200,
                         cellRenderer: (props: any) => {
                             const index: Number = props.cellProps.row.original.index;
                             if (isEdit && isEdit === index) {
@@ -136,10 +136,10 @@ function List() {
                             const index: Number = props.row.original.index;
 
                             if (isEdit && isEdit === index) {
-                                return <span id="delete-button" style={{ color: 'green' }} onClick={() => setEdit(null) }>
+                                return <span id="edit-button" style={{ color: 'green' }} onClick={() => setEdit(null)}>
                                     <RiCheckboxCircleLine size={25} /></span>;
                             } else {
-                                return <span id="delete-button" style={{ color: 'green' }} onClick={() => { setEdit(index) }}><RiEditBoxLine /></span>;
+                                return <span id="edit-button" style={{ color: 'green' }} onClick={() => { setEdit(index) }}><RiEditBoxLine /></span>;
 
                             }
                         },
@@ -151,7 +151,7 @@ function List() {
                         Cell: (props: CellProps<any>) => {
                             const index: Number = props.row.original.index;
                             if (isEdit && isEdit === index) return <></>
-                            else return <span id="edit-button" style={{ color: 'red' }} onClick={() => removeItem(props.row.original.index)}><RiDeleteBin6Line /></span>;
+                            else return <span id="delete-button" style={{ color: 'red' }} onClick={() => removeItem(props.row.original.index)}><RiDeleteBin6Line /></span>;
                         },
                     }
                 ],
@@ -160,8 +160,17 @@ function List() {
         [editItem, removeItem, translatedLabels, isEdit],
     );
 
+
+    const pageSizeList = useMemo(() => [5, 25, 50], []);
+    const paginator = useCallback(
+        (props: TablePaginatorRendererProps) => (
+            <TablePaginator {...props} pageSizeList={pageSizeList} />
+        ),
+        [pageSizeList],
+    );
+
     useEffect(() => {
-        const unsubscribe = store.subscribe(() => {
+        const unsubscribe: any = store.subscribe(() => {
             // update component state or do something else
             const updateList: itemType[] = store.getState().store.itemList.slice()
             setItemList(updateList)
@@ -177,7 +186,10 @@ function List() {
                 emptyTableContent='No data.'
                 isSelectable={true}
                 selectionMode='multi'
-            // isSortable
+                pageSize={10}
+                paginatorRenderer={paginator}
+                enableVirtualization
+                density='condensed'
             />
         </div>
     )

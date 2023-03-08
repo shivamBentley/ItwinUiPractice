@@ -1,0 +1,38 @@
+    .basic-info {
+        width: 80%;
+        border: 0.5px solid black;
+        position: relative;
+        left: 10%;
+        margin: 1rem;
+        background-color: lightblue;
+
+        .customer-info {
+            .inline-input {
+                width: 25%;
+                display: inline-block;
+                margin: 0 0.3rem;
+                padding-top: 1rem;
+            }
+
+            margin-bottom: 2rem;
+        }
+
+        .list-info {
+            .total-amount {
+                // background-color: red;
+                display: inline-block;
+                width: 23rem;
+                height: 3rem;
+                font-size: large;
+            }
+
+            .total-piece {
+                // background-color: yellow;
+                display: inline-block;
+                width: 23rem;
+                height: 3rem;
+                font-size: large;
+            }
+        }
+
+    }

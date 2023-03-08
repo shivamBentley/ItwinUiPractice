@@ -1,6 +1,6 @@
 import { Button } from '@itwin/itwinui-react'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux/es/exports'
+import { useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actionCreators } from "../state"
 

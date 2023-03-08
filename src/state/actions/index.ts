@@ -30,4 +30,12 @@ export const editItem = (columnId: any, value: String | Number, rowData: itemTyp
     }
 }
 
+export const updateCustomer = (customer: any) => {
+    return (dispatch: any) => {
+        dispatch({
+            type: "updateCustomer",
+            payload: customer
+        })
+    }
+}
 
