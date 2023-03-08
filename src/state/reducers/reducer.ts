@@ -21,15 +21,36 @@ const addItem = (state: any, action: any) => {
 }
 
 const removeItem = (state: any, action: any) => {
-    let newList = state.itemList.filter((item: any) => {
-        return item.index !== action.payload;
+    let newList: any = [];
+    state.itemList.forEach((item: any) => {
+        if (item.index !== action.payload) {
+            newList.push(item);
+        }
+        else {
+            state.totalAmount -= item.subtotal;
+        }
     });
     state.itemList = newList;
     return state;
 }
 
 const editItem = (state: any, action: any) => {
-
+    const { columnId, value, rowData } = action.payload;
+    let newList: any = [];
+    state.itemList.forEach((item: any) => {
+        if (rowData.index === item.index) {
+            const updatedItem = { ...item, [columnId]: value }
+            if (columnId === "price" || columnId === "quantity") {
+                state.totalAmount -= item.subtotal;
+                const updatedSubTotalAmount = updatedItem.quantity * updatedItem.price;
+                updatedItem.subtotal = updatedSubTotalAmount;
+                state.totalAmount += updatedItem.subtotal;
+            }
+            newList.push(updatedItem);
+        }
+        else newList.push(item)
+    });
+    state.itemList = newList;
     return state;
 }
 

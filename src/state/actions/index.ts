@@ -16,12 +16,16 @@ export const removeItem = (index: any) => {
     }
 }
 
-
-export const editItem = (index: any) => {
+export const editItem = (columnId: any, value: String | Number, rowData: itemType) => {
+    const payload = {
+        columnId: columnId,
+        value: value,
+        rowData: rowData
+    }
     return (dispatch: any) => {
         dispatch({
             type: "editItem",
-            payload: index
+            payload: payload
         })
     }
 }

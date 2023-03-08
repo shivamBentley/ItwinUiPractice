@@ -1,19 +1,23 @@
 
-import { useMemo, useEffect, useState } from 'react'
+import { useMemo, useEffect, useState, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux/es/exports'
 import { bindActionCreators } from 'redux'
 import { actionCreators } from "../state"
 import store from '../state/store'
-import { RiDeleteBin6Line, RiEditBoxLine } from 'react-icons/ri'
+import { RiDeleteBin6Line, RiEditBoxLine, RiCheckboxCircleLine } from 'react-icons/ri'
 
 import './styles/List.scss'
 
 import {
+    EditableCell,
+    DefaultCell,
     Table,
     tableFilters,
+
 } from '@itwin/itwinui-react';
 import type {
     CellProps,
+    CellRendererProps
 } from 'react-table';
 
 function List() {
@@ -23,6 +27,7 @@ function List() {
     })
     const [itemList, setItemList] = useState<any>(listItem);
     const { removeItem, editItem } = bindActionCreators(actionCreators, useDispatch());
+    const [isEdit, setEdit] = useState<Number | null>(null)
 
     const translatedLabels = useMemo(
         () => ({
@@ -34,7 +39,6 @@ function List() {
         [],
     );;
 
-
     const columns = useMemo(
         () => [
             {
@@ -44,41 +48,84 @@ function List() {
                         id: 'index',
                         Header: 'SL',
                         accessor: 'index',
-                        maxWidth: 50,
+                        maxWidth: 80,
                     },
 
                     {
                         id: 'itemName',
                         Header: 'Item Name',
-                        accessor: 'time',
-                        Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        accessor: 'itemName',
+                        // Filter: tableFilters.NumberRangeFilter(translatedLabels),
                         maxWidth: 200,
+                        cellRenderer: (props: any) => {
+                            const index: Number = props.cellProps.row.original.index;
+                            if (isEdit && isEdit === index) {
+                                return <EditableCell {...props}
+                                    onCellEdit={(columnId: string, value: string, rowData: any) => {
+                                        editItem(columnId, value, rowData)
+                                    }} />
+                            }
+                            return <DefaultCell {...props} />
+                        },
+
                     },
 
                     {
                         id: 'description',
                         Header: 'Description',
                         accessor: 'description',
-                        Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        // Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        cellRenderer: (props: any) => {
+                            const index: Number = props.cellProps.row.original.index;
+                            if (isEdit && isEdit === index) {
+                                return <EditableCell {...props}
+                                    onCellEdit={(columnId: string, value: string, rowData: any) => {
+                                        editItem(columnId, value, rowData)
+                                    }} />
+                            }
+                            return <DefaultCell {...props} />
+                        },
                     },
+
 
                     {
                         id: 'quantity',
                         Header: 'Quantity',
                         accessor: 'quantity',
-                        Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        width: 100,
+                        cellRenderer: (props: any) => {
+                            const index: Number = props.cellProps.row.original.index;
+                            if (isEdit && isEdit === index) {
+                                return <EditableCell {...props}
+                                    onCellEdit={(columnId: string, value: string, rowData: any) => {
+                                        editItem(columnId, value, rowData)
+                                    }} />
+                            }
+                            return <DefaultCell {...props} />
+                        },
                     },
                     {
                         id: 'price',
                         Header: 'Price',
                         accessor: 'price',
-                        Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        width: 100,
+                        cellRenderer: (props: any) => {
+                            const index: Number = props.cellProps.row.original.index;
+                            if (isEdit && isEdit === index) {
+                                return <EditableCell {...props}
+                                    onCellEdit={(columnId: string, value: string, rowData: any) => {
+                                        editItem(columnId, value, rowData)
+                                    }} />
+                            }
+                            return <DefaultCell {...props} />
+                        },
+
                     },
                     {
                         id: 'subtotal',
                         Header: 'Subtotal',
                         accessor: 'subtotal',
-                        Filter: tableFilters.NumberRangeFilter(translatedLabels),
+                        width: 100,
 
                     },
                     {
@@ -86,7 +133,15 @@ function List() {
                         Header: '',
                         width: 50,
                         Cell: (props: CellProps<any>) => {
-                            return <span id="delete-button" style={{ color: 'green' }} onClick={() => editItem(props.row.original.index)}><RiEditBoxLine /></span>;
+                            const index: Number = props.row.original.index;
+
+                            if (isEdit && isEdit === index) {
+                                return <span id="delete-button" style={{ color: 'green' }} onClick={() => setEdit(null) }>
+                                    <RiCheckboxCircleLine size={25} /></span>;
+                            } else {
+                                return <span id="delete-button" style={{ color: 'green' }} onClick={() => { setEdit(index) }}><RiEditBoxLine /></span>;
+
+                            }
                         },
                     },
                     {
@@ -94,13 +149,15 @@ function List() {
                         Header: '',
                         width: 50,
                         Cell: (props: CellProps<any>) => {
-                            return <span id="edit-button" style={{ color: 'red' }} onClick={() => removeItem(props.row.original.index)}><RiDeleteBin6Line /></span>;
+                            const index: Number = props.row.original.index;
+                            if (isEdit && isEdit === index) return <></>
+                            else return <span id="edit-button" style={{ color: 'red' }} onClick={() => removeItem(props.row.original.index)}><RiDeleteBin6Line /></span>;
                         },
                     }
                 ],
             },
         ],
-        [editItem, removeItem, translatedLabels],
+        [editItem, removeItem, translatedLabels, isEdit],
     );
 
     useEffect(() => {
@@ -120,7 +177,7 @@ function List() {
                 emptyTableContent='No data.'
                 isSelectable={true}
                 selectionMode='multi'
-                isSortable
+            // isSortable
             />
         </div>
     )

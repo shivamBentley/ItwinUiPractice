@@ -1,10 +1,11 @@
 import List from './List'
 import DataInput from './DataInput'
+import CustomerInfo from './CustomerInfo'
 
 function Invoice() {
     return (
         <div className='Invoice'>
-            <div>customer details, time , total amount etc</div>
+            <div><CustomerInfo /></div>
             <div className='data-input'><DataInput /></div>
             <List />
         </div>
