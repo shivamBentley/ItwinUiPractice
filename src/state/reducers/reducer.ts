@@ -6,6 +6,7 @@ const initialState: any = {
     },
     itemList: [],
     totalAmount: 0,
+    totalPiece: 0,
     date: '',
     alarm: ''
 }
@@ -15,6 +16,7 @@ const addItem = (state: any, action: any) => {
     action.payload.index = index;
     state.itemList.push(action.payload)
     state.totalAmount += action.payload.subtotal;
+    state.totalPiece += action.payload.quantity;
     state.date = new Date();
     state.itemList.sort((a: any, b: any) => b.index - a.index)
     return state;
@@ -28,6 +30,7 @@ const removeItem = (state: any, action: any) => {
         }
         else {
             state.totalAmount -= item.subtotal;
+            state.totalPiece -= item.quantity;
         }
     });
 
@@ -52,9 +55,11 @@ const editItem = (state: any, action: any) => {
             const updatedItem = { ...item, [columnId]: value }
             if (columnId === "price" || columnId === "quantity") {
                 state.totalAmount -= item.subtotal;
+                state.totalPiece -= item.quantity;
                 const updatedSubTotalAmount = updatedItem.quantity * updatedItem.price;
                 updatedItem.subtotal = updatedSubTotalAmount;
                 state.totalAmount += updatedItem.subtotal;
+                state.totalPiece += updatedItem.quantity;
             }
             newList.push(updatedItem);
         }
